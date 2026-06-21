@@ -4,4 +4,4 @@ const client = new Client({
  intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildMembers']
 });
 
-const TOKEN = process.env.TOKEN
+const TOKEN = process.env
