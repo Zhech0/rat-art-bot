@@ -25,7 +25,11 @@ async function connectDB() {
 }
 
 // --- Fluxer bot setup ---
-const client = new Client({ intents: 0 });
+const client = new Client({
+ prefix: '!',
+ commandsDir: path.join(__dirname, 'commands'),
+ intents: ['Guilds', 'GuildMessages', 'MessageContent']
+});
 
 client.on(Events.Ready, () => {
  console.log(`Logged in as ${client.user?.username || 'Rat Art Bot'}`);
@@ -52,12 +56,11 @@ client.on(Events.MessageCreate, async (message) => {
  if (!message.content.startsWith('!submit')) return;
 
  // Check for attachment
- if (!message.attachments || message.attachments.length === 0) {
+ if (!message.attachments.first() || message.attachments.size === 0) {
  await message.reply('❌ Please attach an image when using `!submit`.');
  return;
  }
 
- const attachment = message.attachments;
  const ext = path.extname(attachment.name) || '.png';
  const allowedExts = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 
@@ -106,11 +109,14 @@ cron.schedule('0 12 1 * *', async () => {
  const filePath = path.join(artFolder, randomFile);
  const fileBuffer = fs.readFileSync(filePath);
 
- await client.channels.send(artOfMonthChannelId, {
- content: '🐀 **Art of the Month!** Create your own version and submit in the submissions channel using the !submit command. At the end of the month, all submissions will be posted in The Gallery!',
- files: { name: randomFile, data: fileBuffer }
+ const channel = client.channels.cache.get(artOfMonthChannelId);
+ if (channel) {
+  await channel.send({
+  content: '🐀 **Art of the Month!** Create your own version and submit in the submissions channel using the !submit command. At the end of the month, all submissions will be posted in The Gallery!',
+  files: { name: randomFile, data: fileBuffer }
  });
-
+ }
+  
  console.log(`Posted ${randomFile} to Art of the Month channel`);
  } catch (err) {
  console.error('Failed to post monthly art:', err);
@@ -135,7 +141,7 @@ cron.schedule('0 18 28-31 * *', async () => {
  await cursor.forEach(async (doc) => {
  await client.channels.send(galleryChannelId, {
  content: '🐀 **Monthly Gallery Submission!**',
- files: { name: doc.fileName, data: doc.imageData.buffer }
+ files: { name: randomFile, data: fileBuffer }
  });
  await submissions.deleteOne({ _id: doc._id });
  count++;
