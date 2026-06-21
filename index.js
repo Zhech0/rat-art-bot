@@ -28,7 +28,7 @@ async function connectDB() {
 const client = new Client({
  prefix: '!',
  commandsDir: path.join(__dirname, 'commands'),
- intents: ['Guilds', 'GuildMessages', 'MessageContent']
+ intents: 'Guilds', 'GuildMessages', 'MessageContent'
 });
 
 client.on(Events.Ready, () => {
@@ -52,30 +52,6 @@ if (!fs.existsSync(artFolder)) {
 client.on(Events.MessageCreate, async (message) => {
  // Only respond in the Submissions channel
  if (message.channel.id!== submissionsChannelId) return;
-
- if (!message.content.startsWith('!submit')) return;
-
- // Check for attachment
-const attachment = message.attachments.first();
-if (!attachment) {
- await message.reply('❌ Please attach an image when using `!submit`.');
- return;
-}
-
-const ext = path.extname(attachment.name) || '.png';
-const allowedExts = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
-
-if (!allowedExts.includes(ext.toLowerCase())) {
- await message.reply('❌ Please attach a valid image file (png, jpg, gif, webp).');
- return;
-}
-console.log(`Attempting download: ${attachment.url}, ext: ${ext}`);
-
- // ---!submit command ---
-client.on(Events.MessageCreate, async (message) => {
- // Only respond in the Submissions channel
- if (message.channel.id!== submissionsChannelId) return;
-
  if (!message.content.startsWith('!submit')) return;
 
  // Check for attachment
@@ -145,18 +121,18 @@ cron.schedule('0 12 1 * *', async () => {
  return;
  }
 
- const randomFile = files[Math.floor(Math.random() * files.length)];
+ const randomFile = files Math.floor(Math.random() * files.length);
  const filePath = path.join(artFolder, randomFile);
  const fileBuffer = fs.readFileSync(filePath);
 
  const channel = client.channels.cache.get(artOfMonthChannelId);
  if (channel) {
-  await channel.send({
-  content: '🐀 **Art of the Month!** Create your own version and submit in the submissions channel using the !submit command. At the end of the month, all submissions will be posted in The Gallery!',
-  files: { name: randomFile, data: fileBuffer }
+ await channel.send({
+ content: '🐀 **Art of the Month!** Create your own version and submit in the submissions channel using the!submit command. At the end of the month, all submissions will be posted in The Gallery!',
+ files: { name: randomFile, attachment: fileBuffer }
  });
  }
-  
+
  console.log(`Posted ${randomFile} to Art of the Month channel`);
  } catch (err) {
  console.error('Failed to post monthly art:', err);
@@ -181,7 +157,7 @@ cron.schedule('0 18 28-31 * *', async () => {
  await cursor.forEach(async (doc) => {
  await client.channels.cache.get(galleryChannelId).send({
  content: '🐀 **Monthly Gallery Submission!**',
- files: { name: doc.fileName, data: doc.imageData }
+ files: { name: doc.fileName, attachment: doc.imageData }
  });
  await submissions.deleteOne({ _id: doc._id });
  count++;
@@ -192,7 +168,6 @@ cron.schedule('0 18 28-31 * *', async () => {
  console.error('Failed to post gallery:', err);
  }
 });
-}
 
 // --- Start ---
 connectDB().catch(console.error);
