@@ -69,7 +69,7 @@ client.on(Events.MessageCreate, async (message) => {
  size: attachment.size
  });
 
- const ext = path.extname(attachment.name) || attachment.url) || '.png';
+ const ext = path.extname(attachment.name) || attachment.url || '.png';
  const allowedExts = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 
  if (!allowedExts.includes(ext.toLowerCase())) {
