@@ -102,7 +102,7 @@ cron.schedule('0 12 1 * *', async () => {
  return;
  }
 
- const randomFile = files Math.floor(Math.random() * files.length);
+ const randomFile = files[Math.floor(Math.random() * files.length)];
  const filePath = path.join(artFolder, randomFile);
  const fileBuffer = fs.readFileSync(filePath);
 
