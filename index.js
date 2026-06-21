@@ -10,3 +10,6 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
+cron.schedule('0 12 1 * *', async () => {
+ // picks a random file from./art/ and posts it
+});
