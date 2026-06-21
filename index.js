@@ -178,7 +178,7 @@ cron.schedule('0 18 28-31 * *', async () => {
  });
 
  let count = 0;
- await cursor.forEach(async (doc)} => {
+ await cursor.forEach(async (doc) => {
  await client.channels.cache.get(galleryChannelId).send, {
  content: '🐀 **Monthly Gallery Submission!**',
  files: { name: randomFile, data: fileBuffer }
