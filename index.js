@@ -69,12 +69,48 @@ if (!allowedExts.includes(ext.toLowerCase())) {
  await message.reply('❌ Please attach a valid image file (png, jpg, gif, webp).');
  return;
 }
+console.log(`Attempting download: ${attachment.url}, ext: ${ext}`);
 
-try {
- // Download the image
+ // ---!submit command ---
+client.on(Events.MessageCreate, async (message) => {
+ // Only respond in the Submissions channel
+ if (message.channel.id!== submissionsChannelId) return;
+
+ if (!message.content.startsWith('!submit')) return;
+
+ // Check for attachment
+ const attachment = message.attachments.first();
+ if (!attachment) {
+ await message.reply('❌ Please attach an image when using `!submit`.');
+ return;
+ }
+
+ // Debug log
+ console.log('Attachment found:', {
+ name: attachment.name,
+ url: attachment.url,
+ contentType: attachment.contentType,
+ size: attachment.size
+ });
+
+ const ext = path.extname(attachment.name) || '.png';
+ const allowedExts = '.png', '.jpg', '.jpeg', '.gif', '.webp';
+
+ if (!allowedExts.includes(ext.toLowerCase())) {
+ await message.reply('❌ Please attach a valid image file (png, jpg, gif, webp).');
+ return;
+ }
+
+ try {
+ console.log(`Attempting download: ${attachment.url}`);
  const response = await fetch(attachment.url);
+
+ if (!response.ok) {
+ throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+ }
+
  const buffer = Buffer.from(await response.arrayBuffer());
- //... rest of your logic
+ console.log(`Downloaded ${buffer.length} bytes`);
 
  // Store in MongoDB as binary
  const submissions = db.collection('submissions');
@@ -91,6 +127,8 @@ try {
  console.log(`Saved submission from user ${message.author.id}`);
  } catch (err) {
  console.error('Failed to save submission:', err);
+ console.error('Error name:', err.name);
+ console.error('Error message:', err.message);
  await message.reply('❌ Something went wrong saving your image. Try again later.');
  }
 });
