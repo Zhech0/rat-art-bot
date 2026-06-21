@@ -91,7 +91,7 @@ client.on(Events.MessageCreate, async (message) => {
  // Store in MongoDB as binary
  const submissions = db.collection('submissions');
  await submissions.insertOne({
- fileName: `${Date.now()}_${attachment.name}`,
+ fileName: `${Date.now()}_${attachment.name || 'image.png'}`,
  imageData: buffer,
  submittedBy: message.author.id,
  submittedAt: new Date(),
