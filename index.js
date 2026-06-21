@@ -56,23 +56,25 @@ client.on(Events.MessageCreate, async (message) => {
  if (!message.content.startsWith('!submit')) return;
 
  // Check for attachment
- if (!message.attachments.first() || message.attachments.size === 0) {
+const attachment = message.attachments.first();
+if (!attachment) {
  await message.reply('❌ Please attach an image when using `!submit`.');
  return;
- }
+}
 
- const ext = path.extname(attachment.name) || '.png';
- const allowedExts = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+const ext = path.extname(attachment.name) || '.png';
+const allowedExts = '.png', '.jpg', '.jpeg', '.gif', '.webp';
 
- if (!allowedExts.includes(ext.toLowerCase())) {
+if (!allowedExts.includes(ext.toLowerCase())) {
  await message.reply('❌ Please attach a valid image file (png, jpg, gif, webp).');
  return;
- }
+}
 
- try {
+try {
  // Download the image
  const response = await fetch(attachment.url);
  const buffer = Buffer.from(await response.arrayBuffer());
+ //... rest of your logic
 
  // Store in MongoDB as binary
  const submissions = db.collection('submissions');
