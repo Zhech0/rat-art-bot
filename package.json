@@ -12,6 +12,6 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "fluxer": "^0.2.4"
+    "@fluxerjs/core": "^1.4.0"
   }
 }
