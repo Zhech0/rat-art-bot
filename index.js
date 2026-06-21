@@ -59,7 +59,7 @@ client.on(Events.MessageCreate, async (message) => {
 
  const attachment = message.attachments;
  const ext = path.extname(attachment.name) || '.png';
- const allowedExts = '.png', '.jpg', '.jpeg', '.gif', '.webp';
+ const allowedExts = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
 
  if (!allowedExts.includes(ext.toLowerCase())) {
  await message.reply('❌ Please attach a valid image file (png, jpg, gif, webp).');
