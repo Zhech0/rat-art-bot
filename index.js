@@ -181,7 +181,7 @@ cron.schedule('0 18 28-31 * *', async () => {
  await cursor.forEach(async (doc) => {
  await client.channels.cache.get(galleryChannelId).send({
  content: '🐀 **Monthly Gallery Submission!**',
- files: { name: randomFile, data: fileBuffer }
+ files: { name: doc.fileName, data: doc.imageData }
  });
  await submissions.deleteOne({ _id: doc._id });
  count++;
