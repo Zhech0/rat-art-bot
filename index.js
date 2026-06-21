@@ -28,7 +28,7 @@ async function connectDB() {
 const client = new Client({
  prefix: '!',
  commandsDir: path.join(__dirname, 'commands'),
- intents: 'Guilds', 'GuildMessages', 'MessageContent'
+ intents: ['Guilds', 'GuildMessages', 'MessageContent']
 });
 
 client.on(Events.Ready, () => {
